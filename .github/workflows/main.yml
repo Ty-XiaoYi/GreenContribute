@@ -5,21 +5,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set git identity
         run: |
           git config --global user.name "Ty-XiaoYi"
-          git config --global user.email "$EMAIL"
-        env:
-          EMAIL: ${{ secrets.EMAIL }}
+          git config --global user.email "${{ secrets.EMAIL }}"
 
       - name: Generate history commits
         run: |
-          START="2024-07-01"
+          START="2024-01-01"
           END=$(date +%Y-%m-%d)
           CUR="$START"
           while [ "$CUR" != "$END" ]; do
@@ -29,7 +30,7 @@ jobs:
             CUR=$(date -d "$CUR +1 day" +%Y-%m-%d)
           done
 
-      - name: Push to GitHub
-        run: |
-          git push origin main
-
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.head_ref || github.ref_name }}
