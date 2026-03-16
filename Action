@@ -13,7 +13,7 @@ jobs:
       - name: Set git identity
         run: |
           git config --global user.name "Ty-XiaoYi"
-          git config --global user.email "1840781341@qq.com"
+          git config --global user.email "EMAIL"
         env:
           EMAIL: ${{ secrets.EMAIL }}
 
