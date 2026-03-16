@@ -1,0 +1,34 @@
+name: Fill Contributions
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set git identity
+        run: |
+          git config --global user.name "Ty-XiaoYi"
+          git config --global user.email "$EMAIL"
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+
+      - name: Generate history commits
+        run: |
+          START="2024-07-01"
+          END=$(date +%Y-%m-%d)
+          CUR="$START"
+          while [ "$CUR" != "$END" ]; do
+            echo "$CUR" > dummy.txt
+            git add dummy.txt
+            GIT_COMMITTER_DATE="$CUR 12:00:00" git commit --date="$CUR 12:00:00" -m "data: $CUR"
+            CUR=$(date -d "$CUR +1 day" +%Y-%m-%d)
+          done
+
+      - name: Push to GitHub
+        run: |
+          git push origin main
